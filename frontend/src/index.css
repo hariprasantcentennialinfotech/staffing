@@ -1,0 +1,271 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary-50: #f0f7ff;
+  --color-primary-100: #e0effe;
+  --color-primary-200: #bae0fd;
+  --color-primary-300: #7cc8fb;
+  --color-primary-400: #38aef7;
+  --color-primary-500: #0ea1e9;
+  --color-primary-600: #0284c7;
+  --color-primary-700: #0369a1;
+  --color-primary-800: #075985;
+  --color-primary-900: #0c4a6e;
+
+  --color-accent-cyan: #0ea5e9;
+  --color-accent-blue: #003A9B;
+}
+
+:root {
+  --primary-blue: #003A9B;
+  --accent-cyan: #0ea5e9;
+  --accent-blue: #2557a7;
+  --bg-slate: #f8fafc;
+  --text-dark: #121212;
+  --spacing-unit: 8px;
+
+  font-family: 'Inter', 'Outfit', system-ui, sans-serif;
+  background-color: var(--bg-slate);
+  color: var(--text-dark);
+  scroll-behavior: smooth;
+}
+
+/* Glassmorphism System */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+}
+
+.glass-dark {
+  background: rgba(15, 23, 42, 0.8);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+/* Premium Shadows */
+.shadow-premium {
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.05);
+}
+
+.shadow-glow {
+  box-shadow: 0 0 20px rgba(79, 70, 229, 0.4);
+}
+
+.shadow-glow-dark {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* Button System */
+.btn-premium {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  font-weight: 700;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.btn-premium-primary {
+  background: var(--primary-blue);
+  color: white;
+  border: none;
+}
+
+.btn-premium-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(0, 58, 155, 0.3), 0 0 15px rgba(0, 58, 155, 0.2);
+}
+
+.btn-premium-outline {
+  background: transparent;
+  color: var(--text-dark);
+  border: 2px solid #e2e8f0;
+}
+
+.btn-premium-outline:hover {
+  background: var(--bg-slate);
+  border-color: var(--primary-blue);
+  color: var(--primary-blue);
+  transform: translateY(-2px);
+}
+
+/* Utility Button + Input System (used across Jobs/JobDetail/Applications/Admin) */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: var(--primary-blue);
+  color: white;
+  font-weight: 700;
+  border-radius: 0.75rem;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.btn-primary:hover {
+  background: #002d78;
+  transform: translateY(-1px);
+  box-shadow: 0 10px 20px rgba(0, 58, 155, 0.25);
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.input-field {
+  width: 100%;
+  background: #f8fafc;
+  border: 2px solid #f1f5f9;
+  border-radius: 0.75rem;
+  padding: 0.75rem 1rem;
+  outline: none;
+  font-weight: 500;
+  color: var(--text-dark);
+  transition: all 0.25s ease;
+}
+
+.input-field:focus {
+  border-color: var(--color-primary-500);
+  background: white;
+}
+
+/* Animations */
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.8s ease-out;
+}
+
+.reveal-on-scroll.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Gradient Text */
+.text-gradient {
+  background: linear-gradient(135deg, var(--primary-blue), var(--accent-blue));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-cyan {
+  background: linear-gradient(135deg, var(--accent-cyan), var(--primary-blue));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Job Rich Content Typography */
+.job-rich-content {
+  color: #475569;
+  font-size: 1.125rem;
+  line-height: 1.75;
+  font-weight: 500;
+}
+
+.job-rich-content p {
+  margin-bottom: 1rem;
+}
+
+.job-rich-content p:last-child {
+  margin-bottom: 0;
+}
+
+.job-rich-content b,
+.job-rich-content strong {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.job-rich-content ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.job-rich-content ol {
+  list-style-type: decimal;
+  padding-left: 1.5rem;
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.job-rich-content li {
+  margin-bottom: 0.5rem;
+}
+
+.job-rich-content li:last-child {
+  margin-bottom: 0;
+}
+
+.job-rich-content h1,
+.job-rich-content h2,
+.job-rich-content h3,
+.job-rich-content h4 {
+  font-weight: 800;
+  color: #0f172a;
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.job-rich-content a {
+  color: #0284c7;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.job-rich-content a:hover {
+  color: #0369a1;
+}
