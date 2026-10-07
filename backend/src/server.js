@@ -75,10 +75,38 @@ app.get('/', (req, res) => {
     res.json({ message: 'Welcome to Job Portal API' });
 });
 
+// ─── Dynamic XML Sitemap for Google Jobs & Search ──────────────────────────────
+app.get('/sitemap.xml', async (req, res) => {
+    try {
+        const Job = require('./models/Job');
+        const jobs = await Job.find({ status: 'open' }).select('slug updatedAt createdAt');
+        const BASE = 'https://staffing.centennialinfotech.com';
+
+        let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
+        xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
+        xml += `  <url>\n    <loc>${BASE}/</loc>\n    <changefreq>daily</changefreq>\n    <priority>1.0</priority>\n  </url>\n`;
+        xml += `  <url>\n    <loc>${BASE}/jobs</loc>\n    <changefreq>hourly</changefreq>\n    <priority>0.9</priority>\n  </url>\n`;
+        xml += `  <url>\n    <loc>${BASE}/contact</loc>\n    <changefreq>weekly</changefreq>\n    <priority>0.8</priority>\n  </url>\n`;
+
+        for (const job of jobs) {
+            const slug = job.slug || job._id;
+            const lastMod = (job.updatedAt || job.createdAt || new Date()).toISOString().split('T')[0];
+            xml += `  <url>\n    <loc>${BASE}/jobs/${encodeURIComponent(slug)}</loc>\n    <lastmod>${lastMod}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.8</priority>\n  </url>\n`;
+        }
+
+        xml += `</urlset>`;
+        res.header('Content-Type', 'application/xml');
+        res.send(xml);
+    } catch (err) {
+        res.status(500).send('Error generating sitemap');
+    }
+});
+
 // ─── API Routes ────────────────────────────────────────────────────────────────
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/jobs', require('./routes/jobRoutes'));
 app.use('/api/applications', require('./routes/applicationRoutes'));
+app.use('/api/contact', require('./routes/contactRoutes'));
 
 // ─── Port ─────────────────────────────────────────────────────────────────────
 const PORT = process.env.PORT || 5000;

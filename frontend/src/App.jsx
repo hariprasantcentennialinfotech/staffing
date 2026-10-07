@@ -17,6 +17,7 @@ import Profile from './pages/Profile';
 import JobDetail from './pages/JobDetail';
 import AdminUserProfile from './pages/AdminUserProfile';
 import AdminLogin from './pages/AdminLogin';
+import Contact from './pages/Contact';
 
 // Protected Route Wrapper
 const ProtectedRoute = ({ children, adminOnly = false }) => {
@@ -37,6 +38,28 @@ const ProtectedRoute = ({ children, adminOnly = false }) => {
 // Main App Content
 const AppContent = () => {
   const location = useLocation();
+
+  React.useEffect(() => {
+    // 1. Google Site Verification Meta Tag (guaranteed on all routes: /jobs, /jobs/:slug, /contact, etc.)
+    let metaTag = document.querySelector('meta[name="google-site-verification"]');
+    if (!metaTag) {
+      metaTag = document.createElement('meta');
+      metaTag.setAttribute('name', 'google-site-verification');
+      metaTag.setAttribute('content', 'i_aIkx7-44slNpsexwQNO7cORSNb5jxSLCP938dUElg');
+      document.head.appendChild(metaTag);
+    } else {
+      metaTag.setAttribute('content', 'i_aIkx7-44slNpsexwQNO7cORSNb5jxSLCP938dUElg');
+    }
+
+    // 2. Dynamic Canonical Tag for each page
+    let canonicalTag = document.querySelector('link[rel="canonical"]');
+    if (!canonicalTag) {
+      canonicalTag = document.createElement('link');
+      canonicalTag.setAttribute('rel', 'canonical');
+      document.head.appendChild(canonicalTag);
+    }
+    canonicalTag.setAttribute('href', `https://staffing.centennialinfotech.com${location.pathname}`);
+  }, [location.pathname]);
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -75,6 +98,12 @@ const AppContent = () => {
         <Route
           path="/jobs/:id"
           element={<JobDetail />}
+        />
+
+        {/* Contact Us */}
+        <Route
+          path="/contact"
+          element={<Contact />}
         />
 
         {/* Candidate Profile */}

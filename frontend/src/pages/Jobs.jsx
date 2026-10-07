@@ -84,6 +84,14 @@ const Jobs = () => {
     };
 
     useEffect(() => {
+        document.title = 'Explore Jobs & Career Opportunities | Centennial Infotech';
+        let metaVerification = document.querySelector('meta[name="google-site-verification"]');
+        if (!metaVerification) {
+            metaVerification = document.createElement('meta');
+            metaVerification.setAttribute('name', 'google-site-verification');
+            metaVerification.setAttribute('content', 'i_aIkx7-44slNpsexwQNO7cORSNb5jxSLCP938dUElg');
+            document.head.appendChild(metaVerification);
+        }
         fetchJobs();
     }, [jobType, selectedRole, experience]);
 

@@ -40,10 +40,13 @@ const Navbar = () => {
     };
 
     const navLinks = [
-        
         {
             name: 'Jobs',
             path: '/jobs'
+        },
+        {
+            name: 'Contact Us',
+            path: '/contact'
         }
     ];
 

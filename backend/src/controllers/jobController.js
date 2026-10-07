@@ -26,7 +26,7 @@ exports.createJob = async (req, res) => {
 
         const generateSlug = (title) => {
             if (!title) return '';
-            return title.trim().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-');
+            return title.trim().toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-');
         };
 
         const job = await Job.create({
@@ -249,7 +249,7 @@ exports.updateJob = async (req, res) => {
 
             const generateSlug = (title) => {
                 if (!title) return '';
-                return title.trim().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-');
+                return title.trim().toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-');
             };
 
             const updateData = {

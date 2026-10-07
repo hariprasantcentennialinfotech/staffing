@@ -5,12 +5,13 @@
 export const getJobSlug = (job) => {
     if (!job) return '';
     if (typeof job === 'string') {
-        return job.trim().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-');
+        return job.trim().toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-');
     }
-    if (job.slug) return job.slug;
+    if (job.slug) return job.slug.toLowerCase();
     if (job.title) {
         return job.title
             .trim()
+            .toLowerCase()
             .replace(/[^\w\s-]/g, '')
             .replace(/\s+/g, '-');
     }

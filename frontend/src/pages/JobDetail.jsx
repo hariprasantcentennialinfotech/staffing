@@ -202,11 +202,32 @@ const JobDetail = () => {
                 .trim();
         };
 
+        const isRemote = job.work_mode === 'remote';
+        const isUSJob =
+            (job.country && /usa|united states|us\b/i.test(job.country)) ||
+            (job.location_city && /united states|usa|us\b/i.test(job.location_city)) ||
+            (job.currency === 'USD');
+
+        const applicantCountryName = isUSJob ? 'USA' : (job.country || 'USA');
+
+        const eligibilityNotice = isRemote
+            ? `Location: Remote – ${applicantCountryName === 'USA' ? 'United States' : applicantCountryName}. Employment Type: ${job.job_type === 'part-time' ? 'Part-Time' : job.job_type === 'contract' ? 'Contract' : job.job_type === 'internship' ? 'Internship' : 'Full-Time'}. Applicant Eligibility: Applicants must currently reside in ${applicantCountryName === 'USA' ? 'the United States' : applicantCountryName}.`
+            : '';
+
         const fullDescription = [
+            eligibilityNotice,
             cleanDescription(job.description),
             Array.isArray(job.requirements) && job.requirements.length > 0 ? `Requirements: ${job.requirements.join('; ')}` : '',
             Array.isArray(job.responsibilities) && job.responsibilities.length > 0 ? `Responsibilities: ${job.responsibilities.join('; ')}` : ''
-        ].filter(Boolean).join('. ') || job.title;
+        ].filter(Boolean).join('\n\n') || job.title;
+
+        const datePostedStr = job.createdAt
+            ? new Date(job.createdAt).toISOString().split('T')[0]
+            : new Date().toISOString().split('T')[0];
+
+        const validThroughStr = job.application_deadline
+            ? new Date(job.application_deadline).toISOString()
+            : new Date(new Date(job.createdAt || Date.now()).getTime() + 60 * 24 * 60 * 60 * 1000).toISOString();
 
         const jobPostingSchema = {
             '@context': 'https://schema.org/',
@@ -215,28 +236,27 @@ const JobDetail = () => {
             description: fullDescription,
             identifier: {
                 '@type': 'PropertyValue',
-                name: job.company_name || 'Centennial Infotech',
+                name: 'Centennial Infotech',
                 value: job.job_id || String(job._id)
             },
-            datePosted: job.createdAt ? new Date(job.createdAt).toISOString() : new Date().toISOString(),
-            validThrough: job.application_deadline
-                ? new Date(job.application_deadline).toISOString()
-                : new Date(Date.now() + 60 * 24 * 60 * 60 * 1000).toISOString(),
+            datePosted: datePostedStr,
+            validThrough: validThroughStr,
             employmentType: employmentTypeMap[job.job_type] || 'FULL_TIME',
             hiringOrganization: {
                 '@type': 'Organization',
-                name: job.company_name || 'Centennial Infotech',
+                name: 'Centennial Infotech',
                 sameAs: 'https://centennialinfotech.com',
-                logo: job.company_logo || 'https://centennialinfotech.com/logo.png'
+                logo: 'https://centennialinfotech.com/logo.png'
             }
         };
 
-        if (job.work_mode === 'remote') {
+        if (isRemote) {
             jobPostingSchema.jobLocationType = 'TELECOMMUTE';
             jobPostingSchema.applicantLocationRequirements = {
                 '@type': 'Country',
-                name: job.country || 'India'
+                name: applicantCountryName
             };
+            // Note: For 100% remote/telecommute jobs with applicantLocationRequirements, Google recommends no physical jobLocation
         } else {
             jobPostingSchema.jobLocation = {
                 '@type': 'Place',
@@ -252,7 +272,7 @@ const JobDetail = () => {
         if (job.salary_min || job.salary_max) {
             jobPostingSchema.baseSalary = {
                 '@type': 'MonetaryAmount',
-                currency: job.currency || 'INR',
+                currency: job.currency || (isUSJob ? 'USD' : 'INR'),
                 value: {
                     '@type': 'QuantitativeValue',
                     minValue: job.salary_min || 0,
@@ -277,6 +297,15 @@ const JobDetail = () => {
             document.head.appendChild(scriptTag);
         }
         scriptTag.text = JSON.stringify(jobPostingSchema);
+
+        // Ensure google-site-verification is guaranteed on this job page
+        let metaVerification = document.querySelector('meta[name="google-site-verification"]');
+        if (!metaVerification) {
+            metaVerification = document.createElement('meta');
+            metaVerification.setAttribute('name', 'google-site-verification');
+            metaVerification.setAttribute('content', 'i_aIkx7-44slNpsexwQNO7cORSNb5jxSLCP938dUElg');
+            document.head.appendChild(metaVerification);
+        }
 
         document.title = `${job.title} at ${job.company_name || 'Centennial Infotech'} | Career Portal`;
 
@@ -389,6 +418,14 @@ const JobDetail = () => {
         );
     }
 
+    const isRemote = job?.work_mode === 'remote';
+    const isUSJob = job && (
+        (job.country && /usa|united states|us\b/i.test(job.country)) ||
+        (job.location_city && /united states|usa|us\b/i.test(job.location_city)) ||
+        (job.currency === 'USD')
+    );
+    const applicantCountryName = isUSJob ? 'USA' : (job?.country || 'USA');
+
     return (
         <div className="min-h-screen bg-slate-50 pt-32 pb-20 px-4">
             {/* Background Glows */}
@@ -459,6 +496,42 @@ const JobDetail = () => {
                             transition={{ delay: 0.1 }}
                             className="bg-white p-8 md:p-12 rounded-[2.5rem] shadow-sm border border-slate-100"
                         >
+                            {/* Explicit Employment & Geographic Eligibility Notice for Google Jobs and Applicants */}
+                            <div className="bg-gradient-to-r from-blue-50/90 to-indigo-50/70 border border-blue-200/80 rounded-2xl p-6 mb-8 shadow-sm">
+                                <div className="flex items-center gap-2.5 mb-3">
+                                    <div className="w-7 h-7 rounded-lg bg-blue-600 text-white flex items-center justify-center flex-shrink-0">
+                                        <Globe className="w-4 h-4" />
+                                    </div>
+                                    <h3 className="text-xs font-black text-blue-950 uppercase tracking-[0.18em]">
+                                        Employment Conditions &amp; Geographic Eligibility
+                                    </h3>
+                                </div>
+                                <div className="grid sm:grid-cols-3 gap-4 pt-3 border-t border-blue-200/50 text-sm">
+                                    <div>
+                                        <span className="text-slate-500 font-bold block text-[11px] uppercase tracking-wider mb-0.5">Location</span>
+                                        <span className="font-extrabold text-slate-900">
+                                            {isRemote
+                                                ? `Remote – ${applicantCountryName === 'USA' ? 'United States' : (job.country || 'Global')}`
+                                                : formatLocation(job)}
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <span className="text-slate-500 font-bold block text-[11px] uppercase tracking-wider mb-0.5">Employment Type</span>
+                                        <span className="font-extrabold text-slate-900 capitalize">
+                                            {job.job_type ? job.job_type.replace('-', ' ') : 'Full-Time'}
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <span className="text-slate-500 font-bold block text-[11px] uppercase tracking-wider mb-0.5">Applicant Eligibility</span>
+                                        <span className="font-extrabold text-blue-700">
+                                            {isRemote
+                                                ? `Applicants must currently reside in ${applicantCountryName === 'USA' ? 'the United States' : (job.country || 'the specified country')}.`
+                                                : 'Eligible for onsite employment at stated location.'}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
                             <h2 className="text-2xl font-black text-slate-900 mb-8 flex items-center">
                                 <FileText className="w-6 h-6 mr-3 text-primary-600" />
                                 Job Overview
