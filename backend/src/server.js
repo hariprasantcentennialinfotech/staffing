@@ -29,6 +29,7 @@ const allowedOrigins = [
     'https://centennial-infotech-staff-hiring.vercel.app',
     'https://centennial-infotech-hiring.vercel.app',
     'https://career.centennialinfotech.com',
+    'https://staffing.centennialinfotech.com',
     'https://centennialinfotech.com',
     process.env.FRONTEND_URL
 ].filter(Boolean);
