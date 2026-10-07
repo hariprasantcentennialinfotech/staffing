@@ -298,7 +298,59 @@ const JobDetail = () => {
         }
         scriptTag.text = JSON.stringify(jobPostingSchema);
 
-        // Ensure google-site-verification is guaranteed on this job page
+        const slug = getJobSlug(job);
+        const canonicalUrl = `https://staffing.centennialinfotech.com/jobs/${slug}`;
+
+        // 1. Canonical Link Tag
+        let canonicalTag = document.querySelector('link[rel="canonical"]');
+        if (!canonicalTag) {
+            canonicalTag = document.createElement('link');
+            canonicalTag.setAttribute('rel', 'canonical');
+            document.head.appendChild(canonicalTag);
+        }
+        canonicalTag.setAttribute('href', canonicalUrl);
+
+        // 2. Meta Description
+        const cleanDescText = cleanDescription(job.description).slice(0, 160);
+        let metaDesc = document.querySelector('meta[name="description"]');
+        if (!metaDesc) {
+            metaDesc = document.createElement('meta');
+            metaDesc.setAttribute('name', 'description');
+            document.head.appendChild(metaDesc);
+        }
+        metaDesc.setAttribute('content', `${job.title} at ${job.company_name || 'Centennial Infotech'}. ${cleanDescText}`);
+
+        // 3. Open Graph Tags
+        const setOg = (property, content) => {
+            let el = document.querySelector(`meta[property="${property}"]`);
+            if (!el) {
+                el = document.createElement('meta');
+                el.setAttribute('property', property);
+                document.head.appendChild(el);
+            }
+            el.setAttribute('content', content);
+        };
+        setOg('og:title', `${job.title} at ${job.company_name || 'Centennial Infotech'}`);
+        setOg('og:description', cleanDescText);
+        setOg('og:url', canonicalUrl);
+        setOg('og:type', 'article');
+        setOg('og:site_name', 'Centennial Infotech');
+
+        // 4. Twitter Card Tags
+        const setTw = (name, content) => {
+            let el = document.querySelector(`meta[name="${name}"]`);
+            if (!el) {
+                el = document.createElement('meta');
+                el.setAttribute('name', name);
+                document.head.appendChild(el);
+            }
+            el.setAttribute('content', content);
+        };
+        setTw('twitter:card', 'summary_large_image');
+        setTw('twitter:title', `${job.title} at ${job.company_name || 'Centennial Infotech'}`);
+        setTw('twitter:description', cleanDescText);
+
+        // 5. Ensure google-site-verification is guaranteed on this job page
         let metaVerification = document.querySelector('meta[name="google-site-verification"]');
         if (!metaVerification) {
             metaVerification = document.createElement('meta');
@@ -306,6 +358,15 @@ const JobDetail = () => {
             metaVerification.setAttribute('content', 'i_aIkx7-44slNpsexwQNO7cORSNb5jxSLCP938dUElg');
             document.head.appendChild(metaVerification);
         }
+
+        // 6. Robots Tag
+        let robotsMeta = document.querySelector('meta[name="robots"]');
+        if (!robotsMeta) {
+            robotsMeta = document.createElement('meta');
+            robotsMeta.setAttribute('name', 'robots');
+            document.head.appendChild(robotsMeta);
+        }
+        robotsMeta.setAttribute('content', 'index, follow, max-image-preview:large');
 
         document.title = `${job.title} at ${job.company_name || 'Centennial Infotech'} | Career Portal`;
 
