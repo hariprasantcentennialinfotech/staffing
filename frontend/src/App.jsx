@@ -40,7 +40,9 @@ const AppContent = () => {
   const location = useLocation();
 
   React.useEffect(() => {
-    // 1. Google Site Verification Meta Tag (guaranteed on all routes: /jobs, /jobs/:slug, /contact, etc.)
+    const currentUrl = `https://staffing.centennialinfotech.com${location.pathname}`;
+
+    // 1. Google Site Verification Meta Tag (guaranteed on all routes)
     let metaTag = document.querySelector('meta[name="google-site-verification"]');
     if (!metaTag) {
       metaTag = document.createElement('meta');
@@ -51,14 +53,29 @@ const AppContent = () => {
       metaTag.setAttribute('content', 'i_aIkx7-44slNpsexwQNO7cORSNb5jxSLCP938dUElg');
     }
 
-    // 2. Dynamic Canonical Tag for each page
+    // 2. Dynamic Canonical Tag for every page
     let canonicalTag = document.querySelector('link[rel="canonical"]');
     if (!canonicalTag) {
       canonicalTag = document.createElement('link');
       canonicalTag.setAttribute('rel', 'canonical');
       document.head.appendChild(canonicalTag);
     }
-    canonicalTag.setAttribute('href', `https://staffing.centennialinfotech.com${location.pathname}`);
+    canonicalTag.setAttribute('href', currentUrl);
+
+    // 3. Social Cards og:url sync for every page
+    let ogUrl = document.querySelector('meta[property="og:url"]');
+    if (ogUrl) {
+      ogUrl.setAttribute('content', currentUrl);
+    }
+
+    // 4. Default meta description & title sync if not on job detail
+    if (!location.pathname.startsWith('/jobs/')) {
+      if (location.pathname === '/contact') {
+        document.title = 'Contact Us | Centennial Infotech Staffing';
+      } else if (location.pathname === '/jobs' || location.pathname === '/') {
+        document.title = 'Explore Jobs & Career Opportunities | Centennial Infotech';
+      }
+    }
   }, [location.pathname]);
 
   return (
